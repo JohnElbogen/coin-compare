@@ -1,6 +1,6 @@
 # coin-compare
 
-Build and Run
+**Build and Run Instructions**
 
 1. Download Java version 17.0.1
 ```
