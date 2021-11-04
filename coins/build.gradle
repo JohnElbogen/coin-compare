@@ -2,20 +2,82 @@ plugins {
 	id 'org.springframework.boot' version '2.5.6'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "com.github.node-gradle.node" version "3.0.1"
 }
 
 group = 'com.coincomp'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+//sourceCompatibility = '17'
+
+//https://stackoverflow.com/questions/69696321/intellij-invalid-source-release-17?newreg=68e40a54f2114a048d37879cdd5978c1
+//added toolchain to fix invalid source release: 17
+//commented out sourceCompatibility = '17'
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
 
 repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+node {
+	// Version of node to use.
+	version = '10.16.2'
+
+	// Base URL for fetching node distributions (change if you have a mirror).
+    distBaseUrl = 'https://nodejs.org/dist'
+
+	// If true, it will download node using above parameters.
+	// If false, it will try to use globally installed node.
+	download = true
+
+	// Set the work directory for unpacking node
+	workDir = file("${project.projectDir}/src/main/frontend/nodejs")
+
+	// Set the work directory for NPM
+	npmWorkDir = file("${project.projectDir}/src/main/frontend/npm")
+
+	// Set the work directory where node_modules should be located
+	nodeModulesDir = file("${project.projectDir}/src/main/frontend")
 }
+
+task npmInstallDependencies(type: NpmTask) {
+	dependsOn 'npmSetup'
+	execOverrides {
+		it.ignoreExitValue = true
+		it.workingDir = 'src/main/frontend'
+	}
+	args = ['install']
+}
+
+task npmBuild(type: NpmTask) {
+	dependsOn 'npmInstallDependencies'
+	execOverrides {
+//        it.ignoreExitValue = true
+		it.workingDir = 'src/main/frontend/coins-react'
+	}
+	args = ['run', 'build']
+}
+
+task copyFrontendToBuild(type: Copy) {
+	dependsOn 'npmBuild'
+	from "$projectDir/src/main/frontend/coins-react/build"
+	into "$buildDir/resources/main/static"
+}
+
+processResources {
+	dependsOn 'copyFrontendToBuild'
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.5'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:2.5.5'
+	implementation 'org.json:json:20171018'
+}
+
 
 test {
 	useJUnitPlatform()
