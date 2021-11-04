@@ -57,7 +57,7 @@ gradle build
 ```
 C:\{your filepath location}\coin-compare\coins\build\libs
 ```
-11. Enter the command\
+11. Enter the command
 ```
 java -jar coins-0.0.1-SNAPSHOT.jar
 ```
