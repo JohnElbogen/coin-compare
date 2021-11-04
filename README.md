@@ -19,14 +19,13 @@ https://nodejs.org/en/
 ```
 C:\{project filepath}\coin-compare\coins\src\main\frontend\coins-react\src\components\FetchPrice.js 
 ```
-and edit the fetch() function in any code editor of choice.
-replace
+and edit the fetch() function in any code editor of choice and replace
 ```
-http://ec2-18-223-32-238.us-east-2.compute.amazonaws.com:8080/api
+"http://ec2-18-223-32-238.us-east-2.compute.amazonaws.com:8080/api"
 ```
 with
 ```
-http://localhost:8080/api.
+"http://localhost:8080/api"
 ```
 
 The code after being changed will look like the following:
